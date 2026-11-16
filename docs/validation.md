@@ -16,6 +16,8 @@ Executed on Windows with Python 3.11.9 using the pinned dependency sets. These a
 | `python scripts/train.py candidate` | Wrote a new five-file bundle; 1,347 train / 450 test; convergence confirmed |
 | `python -m build` | Built source distribution and platform-independent wheel; wheel includes model JSON, digest and attribution |
 | `python -m ruff check .` and `python -m ruff format --check .` | Passed |
+| Documented CLI `predict`, `serve` and real HTTP request | Passed in the clean wheel environment |
+| Publication scan and Markdown links | 40 staged files checked; no credential/private path patterns found; local documentation links resolve |
 
 The clean serving environment explicitly confirmed that neither `numpy` nor `sklearn` was installed. Training tests check the committed split, holdout pixels/labels, source dataset hash and baseline training counts against a new run using scikit-learn's bundled source data. Pure-Python predictions agree with the trained sklearn estimator for every held-out example within absolute `1e-10` (relative tolerance disabled).
 
@@ -25,4 +27,14 @@ Independent code and documentation review checked validation, artifact safety, p
 
 ## Remote checks
 
-Docker is not installed on the local machine. Container execution and the Linux/Python 3.13 checks are delegated to GitHub Actions; their actual run evidence will be recorded here after completion. The workflow includes three serving/test jobs, one optional-training job and one container job. Completion requires all five jobs to pass.
+Docker is not installed on the local machine. [GitHub Actions run 43884216941](https://github.com/Mzulhaq/pixelproof/actions/runs/43884216941) passed all five jobs for source commit `efc0e81edd3e3a640414fe15c913d175f614cfcb`:
+
+- Python 3.11 on Ubuntu: locked install, dependency check, Ruff, runtime tests, real HTTP demo, frozen evaluation and package build.
+- Python 3.13 on Ubuntu: the same serving checks.
+- Python 3.11 on Windows: the same serving checks.
+- Training on Ubuntu/Python 3.11: 12 training tests passed, followed by a fresh candidate bundle.
+- Container: image built successfully; nonroot HTTP demo and frozen evaluation both passed under `docker run --rm --network none`.
+
+The Linux retraining run produced SHA-256 `786174211f03ac4b576aa62858b40df894946cf49d748de1536806cf50760041`, accuracy `0.9622222222222222`, macro-F1 `0.9619897319063684` and log loss `0.16154520968754013`. Its digest differs from the committed Windows-trained artifact because of floating-point coefficient differences. This is why the project separates reproducible data/configuration/metrics from byte-identical retraining. The container's frozen-artifact evaluator reproduced the committed model's exact reported accuracy and error count, with a maximum probability delta of `5.551115123125783e-16`.
+
+The final documentation commit is also verified through the same workflow; use the repository's [Actions history](https://github.com/Mzulhaq/pixelproof/actions) to inspect subsequent commits. No cloud deployment or performance load test is claimed.

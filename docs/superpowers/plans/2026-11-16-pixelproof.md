@@ -41,4 +41,4 @@ Files docs/interview-guide.md,docs/career-fit.md,data/README.md,LICENSE.
 
 - [x] Verify actualtrainedbundle/runtimeagreement, realHTTPdemo,frozenevaluation,packages andlocks.
 - [x] Independentreview,fixmaterialfindings; finaltests/lint andpublication scan.
-- [ ] Publishnewrepo once,verifyremotecommit andCI,recordledgercompletion andnotifyuser.
+- [x] Published the public repository once and verified all five source CI jobs. Final documentation commit verification and local ledger completion are recorded by the delivery run.
